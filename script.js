@@ -1,25 +1,45 @@
 document.addEventListener('DOMContentLoaded', function () {
-    const texts = document.querySelectorAll('.text');
-    let index = 0;
+    const container = document.getElementById('container');
+    const words = ['Bonjour', 'Hello', 'Hola', 'こんにちは', '안녕하세요', 'Привет', '你好', 'Ciao', 'Guten Tag', 'Olá', 'Namaste', 'Salaam', 'Shalom', 'Sawubona', 'Kia Ora', 'Merhaba'];
+    const numberOfTexts = 30; // Number of text elements
 
-    function showNextText() {
-        const currentIndex = index % texts.length;
-        const nextIndex = (index + 1) % texts.length;
-
-        texts[currentIndex].style.opacity = '1';
-        texts[currentIndex].style.transform = 'translateY(0%)';
-
-        setTimeout(() => {
-            texts[currentIndex].style.opacity = '0';
-            texts[currentIndex].style.transform = 'translateY(-100%)';
-            
-            setTimeout(() => {
-                texts[nextIndex].style.transform = 'translateY(100%)';
-                index++;
-                showNextText();
-            }, 1000); // Match this duration to the CSS transition time
-        }, 2000); // Display each text for 2 seconds
+    function createTextElement(text) {
+        const div = document.createElement('div');
+        div.classList.add('text');
+        div.textContent = text;
+        return div;
     }
 
-    showNextText();
+    function getRandomPosition() {
+        const x = Math.random() * (window.innerWidth - 100); // 100 to prevent overflow
+        const y = Math.random() * (window.innerHeight - 50); // 50 to prevent overflow
+        return { x, y };
+    }
+
+    function animateText(element) {
+        const { x, y } = getRandomPosition();
+        element.style.left = `${x}px`;
+        element.style.top = `${y}px`;
+        element.style.opacity = '1';
+        element.style.transform = 'translateY(0%)';
+
+        setTimeout(() => {
+            element.style.opacity = '0';
+            element.style.transform = 'translateY(-100%)';
+            
+            setTimeout(() => {
+                animateText(element); // Recursively animate
+            }, 1000);
+        }, 2000 + Math.random() * 3000); // Random display duration between 2 and 5 seconds
+    }
+
+    for (let i = 0; i < numberOfTexts; i++) {
+        const text = words[Math.floor(Math.random() * words.length)];
+        const textElement = createTextElement(text);
+        container.appendChild(textElement);
+
+        setTimeout(() => {
+            animateText(textElement);
+        }, Math.random() * 2000); // Random start delay
+    }
 });
