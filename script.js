@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const words = ['Bonjour', 'Hello', 'Hola', 'こんにちは', '안녕하세요', 'Привет', '你好', 'Ciao', 'Guten Tag', 'Olá', 'Namaste', 'Salaam', 'Shalom', 'Sawubona', 'Kia Ora', 'Merhaba'];
     const numberOfTexts = 30; // Number of text elements
     const textSize = { width: 100, height: 50 }; // Approximate size of text elements
+    const padding = 20; // Minimum padding between elements
 
     function createTextElement(text) {
         const div = document.createElement('div');
@@ -11,26 +12,34 @@ document.addEventListener('DOMContentLoaded', function () {
         return div;
     }
 
+    function isOverlapping(x, y, existingPositions) {
+        for (let pos of existingPositions) {
+            if (
+                x < pos.x + textSize.width + padding &&
+                x + textSize.width + padding > pos.x &&
+                y < pos.y + textSize.height + padding &&
+                y + textSize.height + padding > pos.y
+            ) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     function getRandomPosition(existingPositions) {
-        let x, y, isOverlapping;
+        let x, y, attempts = 0;
 
         do {
-            isOverlapping = false;
             x = Math.random() * (window.innerWidth - textSize.width);
             y = Math.random() * (window.innerHeight - textSize.height);
+            attempts++;
+        } while (isOverlapping(x, y, existingPositions) && attempts < 100);
 
-            for (let pos of existingPositions) {
-                if (
-                    x < pos.x + textSize.width &&
-                    x + textSize.width > pos.x &&
-                    y < pos.y + textSize.height &&
-                    y + textSize.height > pos.y
-                ) {
-                    isOverlapping = true;
-                    break;
-                }
-            }
-        } while (isOverlapping);
+        if (attempts >= 100) {
+            // If too many attempts, just place it somewhere
+            x = Math.random() * (window.innerWidth - textSize.width);
+            y = Math.random() * (window.innerHeight - textSize.height);
+        }
 
         return { x, y };
     }
@@ -60,6 +69,8 @@ document.addEventListener('DOMContentLoaded', function () {
         container.appendChild(textElement);
 
         const position = getRandomPosition(existingPositions);
+        textElement.style.left = `${position.x}px`;
+        textElement.style.top = `${position.y}px`;
         existingPositions.push(position);
 
         setTimeout(() => {
