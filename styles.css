@@ -17,5 +17,5 @@ body {
     position: absolute;
     font-size: 2em;
     opacity: 0;
-    transition: opacity 1s, transform 1s;
+    transition: opacity 1s, transform 2s;
 }
