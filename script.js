@@ -30,18 +30,18 @@ document.addEventListener('DOMContentLoaded', function () {
         let x, y, attempts = 0;
 
         do {
-            x = Math.random() * (window.innerWidth - textSize.width);
-            y = Math.random() * (window.innerHeight - textSize.height);
+            x = Math.random() * (window.innerWidth - textSize.width - padding);
+            y = Math.random() * (window.innerHeight - textSize.height - padding);
             attempts++;
         } while (isOverlapping(x, y, existingPositions) && attempts < 100);
 
         if (attempts >= 100) {
             // If too many attempts, just place it somewhere
-            x = Math.random() * (window.innerWidth - textSize.width);
-            y = Math.random() * (window.innerHeight - textSize.height);
+            x = Math.random() * (window.innerWidth - textSize.width - padding);
+            y = Math.random() * (window.innerHeight - textSize.height - padding);
         }
 
-        return { x, y };
+        return { x: x + padding, y: y + padding };
     }
 
     function animateText(element, existingPositions) {
